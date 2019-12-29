@@ -2,18 +2,27 @@ package utils
 
 import (
 	"math/rand"
+	"net/url"
 	"time"
 )
 
-const CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-func GetRandomString(length int) string {
+func GetRandomString(l int) string {
 	rand.Seed(time.Now().UnixNano())
 
-	b := make([]byte, length)
+	b := make([]byte, l)
 	for i := range b {
-		b[i] = CHARSET[rand.Intn(len(CHARSET))]
+		b[i] = Charset[rand.Intn(len(Charset))]
 	}
 
 	return string(b)
+}
+
+func CheckUrlStructure(u string) error {
+	_, err := url.ParseRequestURI(u)
+	if err != nil {
+		return err
+	}
+	return nil
 }

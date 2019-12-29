@@ -6,9 +6,12 @@ import (
 	"goshort/backend/config"
 )
 
+const trigger = "CREATE TRIGGER delete_trigger BEFORE INSERT ON urls FOR EACH ROW BEGIN DELETE FROM urls " +
+	"WHERE valid_until < (SELECT strftime('%Y-%m-%d %H:%M:%S', datetime('now', 'localtime'))); END;"
+
 func Open() (*gorm.DB, error) {
-	c := config.GetConfig()
-	return gorm.Open(c.Database.Type, c.Database.Path)
+	cfg := config.GetConfig()
+	return gorm.Open(cfg.Database.Type, cfg.Database.Path)
 }
 
 func Recreate() error {
@@ -20,6 +23,7 @@ func Recreate() error {
 
 	db.DropTableIfExists(&Url{})
 	db.CreateTable(&Url{})
+	db.Exec(trigger)
 	return nil
 }
 
@@ -61,13 +65,13 @@ func GetUrlsFromRows(db *gorm.DB, rows *sql.Rows) ([]Url, error) {
 	var urls []Url
 
 	for rows.Next() {
-		var oUrl Url
-		err := db.ScanRows(rows, &oUrl)
+		var url Url
+		err := db.ScanRows(rows, &url)
 		if err != nil {
 			return urls, err
 		}
 
-		urls = append(urls, oUrl)
+		urls = append(urls, url)
 	}
 
 	return urls, nil

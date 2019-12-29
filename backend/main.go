@@ -5,27 +5,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"goshort/backend/config"
 	"goshort/backend/data"
+	"goshort/backend/exception"
 	"goshort/backend/handler"
 )
 
 func main() {
-	c := config.GetConfig()
+	cfg := config.GetConfig()
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 
-	r.GET(c.Server.Status, handler.Status)
-	r.POST(c.Server.Shorten, handler.Shorten)
+	r.GET(cfg.Server.Status, handler.Status)
+	r.POST(cfg.Server.Shorten, handler.Shorten)
 	r.NoRoute(handler.Find)
 
 	err := data.Recreate()
 	if err != nil {
-		panic(err)
+		exception.FatalInternal(err)
 	}
 
-	err = r.Run(c.Server.Port)
+	err = r.Run(cfg.Server.Port)
 	if err != nil {
-		panic(err)
+		exception.FatalInternal(err)
 	}
 }

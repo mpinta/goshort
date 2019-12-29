@@ -24,12 +24,12 @@ func GetConfig() Config {
 	}
 	defer f.Close()
 
-	var c Config
+	var cfg Config
 	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&c)
+	err = decoder.Decode(&cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	return c
+	return cfg
 }
