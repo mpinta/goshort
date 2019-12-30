@@ -16,8 +16,8 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 
-	r.GET(cfg.Server.Status, handler.Status)
-	r.POST(cfg.Server.Shorten, handler.Shorten)
+	r.GET(cfg.Server.StatusEndpoint, handler.Status)
+	r.POST(cfg.Server.ShortenEndpoint, handler.Shorten)
 	r.NoRoute(handler.Find)
 
 	err := data.Recreate()

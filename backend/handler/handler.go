@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"goshort/backend/config"
 	"goshort/backend/data"
 	"goshort/backend/exception"
 	"goshort/backend/utils"
@@ -17,17 +18,19 @@ const MessageRunning = "Goshort running!"
 const MessageNotFound = "URL not found!"
 const MessageIncorrectUrl = "Incorrect URL format!"
 const MessageInternalError = "Internal server error!"
+const MessageIncorrectFormat = "Incorrect request format!"
 const MessageIncorrectPeriod = "Incorrect validity period!"
-const MessageIncorrectRequest = "Incorrect request format!"
 
 func Status(c *gin.Context) {
 	c.JSON(http.StatusOK, MessageRunning)
 }
 
 func Shorten(c *gin.Context) {
+	cfg := config.GetConfig()
+
 	req, err := GetRequestBody(c)
 	if err != nil {
-		exception.Http(c, http.StatusBadRequest, MessageIncorrectRequest)
+		exception.Http(c, http.StatusBadRequest, MessageIncorrectFormat)
 		return
 	}
 
@@ -42,7 +45,7 @@ func Shorten(c *gin.Context) {
 		return
 	}
 
-	shorten, err := GetShortUrl(5)
+	shorten, err := GetShortUrl(cfg.ShortUrl.Length)
 	if err != nil {
 		exception.Http(c, http.StatusInternalServerError, MessageInternalError)
 		exception.Internal(err)
@@ -66,6 +69,7 @@ func Shorten(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, Response{
 		ShortUrl:   url.ShortUrl,
+		CreatedAt:  url.CreatedAt,
 		ValidUntil: url.ValidUntil,
 	})
 }
@@ -91,6 +95,7 @@ func Find(c *gin.Context) {
 	}
 
 	http.Redirect(c.Writer, c.Request, urls[0].FullUrl, http.StatusFound)
+	c.JSON(http.StatusOK, urls[0])
 }
 
 func GetRequestBody(c *gin.Context) (Request, error) {

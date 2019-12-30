@@ -1,8 +1,12 @@
 server:
   port: ":8080"
-  status: "/status"
-  shorten: "/shorten"
+  rootEndpoint: "localhost"
+  statusEndpoint: "/status"
+  shortenEndpoint: "/shorten"
 
 database:
   type: "sqlite3"
   path: "data/database.db"
+
+shortUrl:
+  length: 5
