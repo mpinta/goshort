@@ -101,13 +101,13 @@ func Find(c *gin.Context) {
 func GetRequestBody(c *gin.Context) (Request, error) {
 	var request Request
 
-	aBody, err := ioutil.ReadAll(c.Request.Body)
+	req, err := ioutil.ReadAll(c.Request.Body)
 	defer c.Request.Body.Close()
 	if err != nil {
 		return request, err
 	}
 
-	err = json.Unmarshal(aBody, &request)
+	err = json.Unmarshal(req, &request)
 	if err != nil {
 		return request, err
 	}
