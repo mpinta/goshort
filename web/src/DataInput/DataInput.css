@@ -1,0 +1,9 @@
+#shortenButton {
+  margin-left: 25px;
+  width: 30%;
+}
+
+.shortenButtonCopied {
+  background-color: #03A9F4 !important;
+  border-color: #03A9F4 !important;
+}

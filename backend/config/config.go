@@ -25,7 +25,7 @@ type Config struct {
 }
 
 func GetConfig() Config {
-	f, err := os.Open(Path)
+	f, err := os.Open("backend/" + Path)
 	if err != nil {
 		f, err = os.Open("../" + Path)
 		if err != nil {

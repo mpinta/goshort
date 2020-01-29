@@ -7,6 +7,7 @@ import (
 	"goshort/backend/handler"
 	"io/ioutil"
 	"net/http"
+	"path"
 	"testing"
 	"time"
 )
@@ -53,7 +54,7 @@ func TestShorten(t *testing.T) {
 		t.Errorf("Status code is incorrect, got: %d, want: %d.", res.StatusCode, http.StatusCreated)
 	}
 
-	if len(resBody.ShortUrl) != cfg.ShortUrl.Length {
+	if len(path.Base(resBody.ShortUrl)) != cfg.ShortUrl.Length {
 		t.Errorf("Short URL length is incorrect, got: %d, want: %d.", len(resBody.ShortUrl), cfg.ShortUrl.Length)
 	}
 
@@ -114,9 +115,7 @@ func TestShortenIncorrectPeriod(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	cfg := config.GetConfig()
-
-	res, err := http.Get("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + "/" + shorten)
+	res, err := http.Get("http://" + shorten)
 	if err != nil {
 		t.Fatal(err)
 	}

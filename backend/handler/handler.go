@@ -68,7 +68,7 @@ func Shorten(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, Response{
-		ShortUrl:   url.ShortUrl,
+		ShortUrl:   cfg.Server.RootEndpoint + cfg.Server.Port + "/" + url.ShortUrl,
 		CreatedAt:  url.CreatedAt,
 		ValidUntil: url.ValidUntil,
 	})

@@ -6,7 +6,7 @@ import (
 )
 
 func Http(c *gin.Context, status int, message string) {
-	c.JSON(status, gin.H{"Error": message})
+	c.JSON(status, gin.H{"exception": message})
 }
 
 func Internal(err error) {
