@@ -1,19 +1,20 @@
 package config
 
 import (
+	"github.com/mpinta/goshort/backend/exception"
+	"github.com/mpinta/goshort/backend/utils"
 	"gopkg.in/yaml.v2"
-	"goshort/backend/exception"
 	"os"
 )
-
-const Path = "config/config.yml"
 
 type Config struct {
 	Server struct {
 		Port            string `yaml:"port"`
+		Host            string `yaml:"host"`
 		RootEndpoint    string `yaml:"rootEndpoint"`
 		StatusEndpoint  string `yaml:"statusEndpoint"`
 		ShortenEndpoint string `yaml:"shortenEndpoint"`
+		FindEndpoint    string `yaml:"findEndpoint"`
 	} `yaml:"server"`
 	Database struct {
 		Path string `yaml:"path"`
@@ -25,12 +26,9 @@ type Config struct {
 }
 
 func GetConfig() Config {
-	f, err := os.Open("backend/" + Path)
+	f, err := os.Open(utils.GetApplicationPath() + "/config.yml")
 	if err != nil {
-		f, err = os.Open("../" + Path)
-		if err != nil {
-			exception.FatalInternal(err)
-		}
+		exception.FatalInternal(err)
 	}
 	defer f.Close()
 

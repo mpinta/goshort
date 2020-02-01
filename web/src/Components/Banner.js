@@ -1,5 +1,4 @@
 import React from 'react';
-import '../App.css';
 import './Banner.css';
 import { Jumbotron, Button } from 'react-bootstrap';
 

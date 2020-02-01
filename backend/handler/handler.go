@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"goshort/backend/config"
-	"goshort/backend/data"
-	"goshort/backend/exception"
-	"goshort/backend/utils"
+	"github.com/mpinta/goshort/backend/config"
+	"github.com/mpinta/goshort/backend/data"
+	"github.com/mpinta/goshort/backend/exception"
+	"github.com/mpinta/goshort/backend/utils"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -67,15 +66,15 @@ func Shorten(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, Response{
-		ShortUrl:   cfg.Server.RootEndpoint + cfg.Server.Port + "/" + url.ShortUrl,
+	c.JSON(http.StatusCreated, ShortenRes{
+		ShortUrl:   url.ShortUrl,
 		CreatedAt:  url.CreatedAt,
 		ValidUntil: url.ValidUntil,
 	})
 }
 
 func Find(c *gin.Context) {
-	url := strings.Replace(c.Request.RequestURI, "/", "", -1)
+	url := c.Param("url")
 
 	urls, err := data.Get(url)
 	if err != nil {
@@ -94,12 +93,13 @@ func Find(c *gin.Context) {
 		return
 	}
 
-	http.Redirect(c.Writer, c.Request, urls[0].FullUrl, http.StatusFound)
-	c.JSON(http.StatusOK, urls[0])
+	c.JSON(http.StatusOK, FindRes{
+		FullUrl: urls[0].FullUrl,
+	})
 }
 
-func GetRequestBody(c *gin.Context) (Request, error) {
-	var request Request
+func GetRequestBody(c *gin.Context) (ShortenReq, error) {
+	var request ShortenReq
 
 	req, err := ioutil.ReadAll(c.Request.Body)
 	defer c.Request.Body.Close()

@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"goshort/backend/config"
-	"goshort/backend/data"
-	"goshort/backend/exception"
-	"goshort/backend/handler"
+	"github.com/mpinta/goshort/backend/config"
+	"github.com/mpinta/goshort/backend/data"
+	"github.com/mpinta/goshort/backend/exception"
+	"github.com/mpinta/goshort/backend/handler"
 )
 
 func main() {
@@ -16,9 +16,9 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 
-	r.GET(cfg.Server.StatusEndpoint, handler.Status)
-	r.POST(cfg.Server.ShortenEndpoint, handler.Shorten)
-	r.NoRoute(handler.Find)
+	r.GET(cfg.Server.RootEndpoint + cfg.Server.StatusEndpoint, handler.Status)
+	r.POST(cfg.Server.RootEndpoint + cfg.Server.ShortenEndpoint, handler.Shorten)
+	r.GET(cfg.Server.RootEndpoint + cfg.Server.FindEndpoint + "/:url", handler.Find)
 
 	err := data.Recreate()
 	if err != nil {

@@ -1,12 +1,13 @@
 server:
   port: ":8080"
-  rootEndpoint: "localhost"
+  host: "http://localhost"
+  rootEndpoint: "/api"
   statusEndpoint: "/status"
   shortenEndpoint: "/shorten"
+  findEndpoint: "/find"
 
 database:
   type: "sqlite3"
-  path: "backend/data/database.db"
 
 shortUrl:
   length: 5

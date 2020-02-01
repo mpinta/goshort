@@ -3,8 +3,8 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"goshort/backend/config"
-	"goshort/backend/handler"
+	"github.com/mpinta/goshort/backend/config"
+	"github.com/mpinta/goshort/backend/handler"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -17,7 +17,7 @@ var shorten string
 func TestStatus(t *testing.T) {
 	cfg := config.GetConfig()
 
-	res, err := http.Get("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + cfg.Server.StatusEndpoint)
+	res, err := http.Get(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint + cfg.Server.StatusEndpoint)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestShorten(t *testing.T) {
 	cfg := config.GetConfig()
 	var reqBody = []byte (`{"full_url": "https://www.github.com/", "minutes_valid": 1}`)
 
-	res, err := http.Post("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + cfg.Server.ShortenEndpoint,
+	res, err := http.Post(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint + cfg.Server.ShortenEndpoint,
 		"application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		t.Fatal(err)
@@ -44,7 +44,7 @@ func TestShorten(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var resBody handler.Response
+	var resBody handler.ShortenRes
 	err = json.Unmarshal(response, &resBody)
 	if err != nil {
 		t.Fatal(err)
@@ -70,7 +70,7 @@ func TestShortenIncorrectFormat(t *testing.T) {
 	cfg := config.GetConfig()
 	var reqBody = []byte (`{"url": "https://www.github.com/", "minutes": 1}`)
 
-	res, err := http.Post("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + cfg.Server.ShortenEndpoint,
+	res, err := http.Post(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint + cfg.Server.ShortenEndpoint,
 		"application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		t.Fatal(err)
@@ -86,7 +86,7 @@ func TestShortenIncorrectUrl(t *testing.T) {
 	cfg := config.GetConfig()
 	var reqBody = []byte (`{"full_url": "www.github.com", "minutes_valid": 1}`)
 
-	res, err := http.Post("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + cfg.Server.ShortenEndpoint,
+	res, err := http.Post(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint + cfg.Server.ShortenEndpoint,
 		"application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		t.Fatal(err)
@@ -102,7 +102,7 @@ func TestShortenIncorrectPeriod(t *testing.T) {
 	cfg := config.GetConfig()
 	var reqBody = []byte (`{"full_url": "https://www.github.com/", "minutes_valid": 0}`)
 
-	res, err := http.Post("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + cfg.Server.ShortenEndpoint,
+	res, err := http.Post(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint + cfg.Server.ShortenEndpoint,
 		"application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		t.Fatal(err)
@@ -115,7 +115,10 @@ func TestShortenIncorrectPeriod(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	res, err := http.Get("http://" + shorten)
+	cfg := config.GetConfig()
+
+	res, err := http.Get(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint +
+		cfg.Server.FindEndpoint + "/" + shorten)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +132,8 @@ func TestFind(t *testing.T) {
 func TestFindNotFoundUrl(t *testing.T) {
 	cfg := config.GetConfig()
 
-	res, err := http.Get("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + "/" + "myurl")
+	res, err := http.Get(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint +
+		cfg.Server.FindEndpoint + "/" + "myurl")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,10 +146,10 @@ func TestFindNotFoundUrl(t *testing.T) {
 
 func TestFindNotFoundPeriod(t *testing.T) {
 	cfg := config.GetConfig()
-
 	time.Sleep(60 * time.Second)
 
-	res, err := http.Get("http://" + cfg.Server.RootEndpoint + cfg.Server.Port + "/" + shorten)
+	res, err := http.Get(cfg.Server.Host + cfg.Server.Port + cfg.Server.RootEndpoint +
+		cfg.Server.FindEndpoint + "/" + shorten)
 	if err != nil {
 		t.Fatal(err)
 	}

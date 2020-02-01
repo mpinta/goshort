@@ -1,7 +1,9 @@
 import React from 'react';
-import '../App.css';
 import './DataInput.css';
+import Page from './Page';
 import { Form, Button, InputGroup, Alert } from 'react-bootstrap';
+
+const Shorten = '/shorten';
 
 class DataInput extends React.Component {
   constructor(props) {
@@ -28,7 +30,7 @@ class DataInput extends React.Component {
     let urlInput = document.getElementById('urlInput');
     let minutesInput = document.getElementById('minutesInput');
     
-    fetch(process.env.REACT_APP_API_URL + '/shorten', {
+    fetch(process.env.REACT_APP_API_URL + Shorten, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -41,7 +43,7 @@ class DataInput extends React.Component {
         minutes_valid: parseInt(minutesInput.value)
       })
     })
-    .then(res =>  res.json()
+    .then(res => res.json()
       .then(data => {
         if(res.status === 500) {
           this.setState({
@@ -50,9 +52,7 @@ class DataInput extends React.Component {
             alertValue: data.exception
           })
           return
-        }
-
-        if(res.status !== 201) {
+        } else if(res.status !== 201) {
           this.setState({ 
             alertShow: true,
             alertVariant: 'danger',
@@ -62,14 +62,14 @@ class DataInput extends React.Component {
         }
         
         this.setState({ 
-            alertShow: true,
-            alertVariant: 'success',
-            alertValue: 'Your short URL is valid until ' + new Date(data.valid_until).toUTCString(),
-            buttonValue: 'Copy URL',
-            buttonSwitch: true
+          alertShow: true,
+          alertVariant: 'success',
+          alertValue: 'Your short URL is valid until ' + new Date(data.valid_until).toUTCString(),
+          buttonValue: 'Copy URL',
+          buttonSwitch: true
         })
 
-        urlInput.value = data.short_url;
+        urlInput.value = window.location.href + data.short_url;
       })
     )
   }
@@ -98,20 +98,22 @@ class DataInput extends React.Component {
 
   render() {
     return (
-      <div id='dataInput'>
-        <Form onSubmit={(e) => {this.handleSubmit(e)}}>
-          <Form.Group>
-            <Form.Control id='urlInput' type='url' placeholder='URL you want to shorten' required />
-          </Form.Group>
-          <Form.Group>
-            <InputGroup>
-              <Form.Control id='minutesInput' type='number' placeholder='Minutes (1-60)' min='1' max='60' required />
-              <Button id='shortenButton' type='submit' variant='primary'>{this.state.buttonValue}</Button>
-            </InputGroup>
-          </Form.Group>
+      <Page>
+        <div id='dataInput'>
+          <Form onSubmit={(e) => {this.handleSubmit(e)}}>
+            <Form.Group>
+              <Form.Control id='urlInput' type='url' placeholder='URL you want to shorten' required />
+            </Form.Group>
+            <Form.Group>
+              <InputGroup>
+                <Form.Control id='minutesInput' type='number' placeholder='Minutes (1-60)' min='1' max='60' required />
+                <Button id='shortenButton' type='submit' variant='primary'>{this.state.buttonValue}</Button>
+              </InputGroup>
+            </Form.Group>
+          </Form>
           <Alert id='alert' show={this.state.alertShow} variant={this.state.alertVariant}>{this.state.alertValue}</Alert>
-        </Form>
-      </div>
+        </div>
+      </Page>
     );
   }
 }

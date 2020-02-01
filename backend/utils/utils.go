@@ -3,6 +3,8 @@ package utils
 import (
 	"math/rand"
 	"net/url"
+	"os"
+	"path"
 	"time"
 )
 
@@ -25,4 +27,8 @@ func CheckUrlStructure(u string) error {
 		return err
 	}
 	return nil
+}
+
+func GetApplicationPath() string {
+	return path.Join(os.Getenv("GOPATH"), "src/github.com/mpinta/goshort/backend")
 }

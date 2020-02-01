@@ -75,3 +75,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# Sqlite database file
+/backend/database.db

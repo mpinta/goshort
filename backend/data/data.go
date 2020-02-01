@@ -3,7 +3,8 @@ package data
 import (
 	"database/sql"
 	"github.com/jinzhu/gorm"
-	"goshort/backend/config"
+	"github.com/mpinta/goshort/backend/config"
+	"github.com/mpinta/goshort/backend/utils"
 )
 
 const trigger = "CREATE TRIGGER delete_trigger BEFORE INSERT ON urls FOR EACH ROW BEGIN DELETE FROM urls " +
@@ -11,7 +12,7 @@ const trigger = "CREATE TRIGGER delete_trigger BEFORE INSERT ON urls FOR EACH RO
 
 func Open() (*gorm.DB, error) {
 	cfg := config.GetConfig()
-	return gorm.Open(cfg.Database.Type, cfg.Database.Path)
+	return gorm.Open(cfg.Database.Type, utils.GetApplicationPath() + "/database.db")
 }
 
 func Recreate() error {
