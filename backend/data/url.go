@@ -7,8 +7,8 @@ type Url struct {
 	FullUrl      string    `gorm:"type:VARCHAR(100);NOT NULL"`
 	ShortUrl     string    `gorm:"type:VARCHAR(50);NOT NULL"`
 	CreatedAt    time.Time `gorm:"type:DATETIME;NOT NULL"`
-	ValidUntil   time.Time `gorm:"type:DATETIME;NOT NULL"`
-	MinutesValid int       `gorm:"NOT NULL"`
+	ValidUntil   time.Time `gorm:"type:DATETIME"`
+	MinutesValid int
 }
 
 func (Url) TableName() string {

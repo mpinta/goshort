@@ -14,10 +14,10 @@ type Config struct {
 		RootEndpoint    string `yaml:"rootEndpoint"`
 		StatusEndpoint  string `yaml:"statusEndpoint"`
 		ShortenEndpoint string `yaml:"shortenEndpoint"`
+		LimitEndpoint   string `yaml:"limitEndpoint"`
 		FindEndpoint    string `yaml:"findEndpoint"`
 	} `yaml:"server"`
 	Database struct {
-		Path string `yaml:"path"`
 		Type string `yaml:"type"`
 	} `yaml:"database"`
 	ShortUrl struct {

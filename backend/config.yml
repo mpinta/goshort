@@ -4,6 +4,7 @@ server:
   rootEndpoint: "/api"
   statusEndpoint: "/status"
   shortenEndpoint: "/shorten"
+  limitEndpoint: "/shorten/limit"
   findEndpoint: "/find"
 
 database:

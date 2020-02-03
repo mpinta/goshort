@@ -18,7 +18,7 @@ const MessageNotFound = "URL not found!"
 const MessageIncorrectUrl = "Incorrect URL format!"
 const MessageInternalError = "Internal server error!"
 const MessageIncorrectFormat = "Incorrect request format!"
-const MessageIncorrectPeriod = "Incorrect validity period!"
+const MessageIncorrectPeriod = "Incorrect time limit!"
 
 func Status(c *gin.Context) {
 	c.JSON(http.StatusOK, MessageRunning)
@@ -27,7 +27,47 @@ func Status(c *gin.Context) {
 func Shorten(c *gin.Context) {
 	cfg := config.GetConfig()
 
-	req, err := GetRequestBody(c)
+	req, err := GetFullUrlBody(c)
+	if err != nil {
+		exception.Http(c, http.StatusBadRequest, MessageIncorrectFormat)
+		return
+	}
+
+	err = utils.CheckUrlStructure(req.FullUrl)
+	if err != nil {
+		exception.Http(c, http.StatusBadRequest, MessageIncorrectUrl)
+		return
+	}
+
+	shorten, err := GetShortUrl(cfg.ShortUrl.Length)
+	if err != nil {
+		exception.Http(c, http.StatusInternalServerError, MessageInternalError)
+		exception.Internal(err)
+		return
+	}
+
+	url := data.Url{
+		FullUrl:   req.FullUrl,
+		ShortUrl:  shorten,
+		CreatedAt: time.Now(),
+	}
+
+	err = data.Insert(url)
+	if err != nil {
+		exception.Http(c, http.StatusInternalServerError, MessageInternalError)
+		exception.Internal(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, ShortUrl{
+		ShortUrl: url.ShortUrl,
+	})
+}
+
+func Limit(c *gin.Context) {
+	cfg := config.GetConfig()
+
+	req, err := GetLimitBody(c)
 	if err != nil {
 		exception.Http(c, http.StatusBadRequest, MessageIncorrectFormat)
 		return
@@ -66,7 +106,7 @@ func Shorten(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, ShortenRes{
+	c.JSON(http.StatusCreated, LimitRes{
 		ShortUrl:   url.ShortUrl,
 		CreatedAt:  url.CreatedAt,
 		ValidUntil: url.ValidUntil,
@@ -88,18 +128,35 @@ func Find(c *gin.Context) {
 		return
 	}
 
-	if urls[0].ValidUntil.Before(time.Now()) {
+	if urls[0].ValidUntil.Before(time.Now()) && urls[0].MinutesValid != 0 {
 		exception.Http(c, http.StatusNotFound, MessageNotFound)
 		return
 	}
 
-	c.JSON(http.StatusOK, FindRes{
+	c.JSON(http.StatusOK, FullUrl{
 		FullUrl: urls[0].FullUrl,
 	})
 }
 
-func GetRequestBody(c *gin.Context) (ShortenReq, error) {
-	var request ShortenReq
+func GetFullUrlBody(c *gin.Context) (FullUrl, error) {
+	var request FullUrl
+
+	req, err := ioutil.ReadAll(c.Request.Body)
+	defer c.Request.Body.Close()
+	if err != nil {
+		return request, err
+	}
+
+	err = json.Unmarshal(req, &request)
+	if err != nil {
+		return request, err
+	}
+
+	return request, nil
+}
+
+func GetLimitBody(c *gin.Context) (LimitReq, error) {
+	var request LimitReq
 
 	req, err := ioutil.ReadAll(c.Request.Body)
 	defer c.Request.Body.Close()

@@ -8,11 +8,12 @@ import (
 )
 
 const trigger = "CREATE TRIGGER delete_trigger BEFORE INSERT ON urls FOR EACH ROW BEGIN DELETE FROM urls " +
-	"WHERE valid_until < (SELECT strftime('%Y-%m-%d %H:%M:%S', datetime('now', 'localtime'))); END;"
+	"WHERE valid_until < (SELECT strftime('%Y-%m-%d %H:%M:%S', datetime('now', 'localtime'))) " +
+	"AND minutes_valid != 0; END;"
 
 func Open() (*gorm.DB, error) {
 	cfg := config.GetConfig()
-	return gorm.Open(cfg.Database.Type, utils.GetApplicationPath() + "/database.db")
+	return gorm.Open(cfg.Database.Type, utils.GetApplicationPath()+"/database.db")
 }
 
 func Recreate() error {
