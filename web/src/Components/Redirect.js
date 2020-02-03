@@ -45,6 +45,13 @@ class Redirect extends React.Component {
         window.location.href = data.full_url;
       })
     )
+    .catch(
+      this.setState({
+        alertShow: true,
+        alertVariant: 'info',
+        alertValue: 'Network error occurred!'
+      })
+    )
   }
 
   render() {

@@ -29,7 +29,7 @@ class DataInput extends React.Component {
 
     let urlInput = document.getElementById('urlInput');
     let minutesInput = document.getElementById('minutesInput');
-    
+
     fetch(process.env.REACT_APP_API_URL + Shorten, {
       headers: {
         'Content-Type': 'application/json'
@@ -70,6 +70,13 @@ class DataInput extends React.Component {
         })
 
         urlInput.value = window.location.href + data.short_url;
+      })
+    )
+    .catch(
+      this.setState({
+        alertShow: true,
+        alertVariant: 'info',
+        alertValue: 'Network error occurred!'
       })
     )
   }
