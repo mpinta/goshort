@@ -1,0 +1,13 @@
+version: "3"
+services:
+  backend:
+    build: ./backend
+    image: goshort-backend
+    ports:
+      - 8080:8080
+  web:
+    build: ./web
+    image: goshort-web
+    ports:
+      - 3000:3000
+      
