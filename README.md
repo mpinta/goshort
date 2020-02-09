@@ -5,7 +5,7 @@ Simple URL shortener written in [React](https://reactjs.org/) and [Golang](https
 __Goshort__ shortens given URL into a random character string that is much prettier and easier to remember. When we enter a short URL into the search bar, the goshort redirects us to its source page. Shortener can provide a short URL without a time limit or a short URL, which is valid between 1 and 60 minutes.
 
 ## Usage
-You can set up goshort either using Docker, or manually building it from source. To install it, firstly clone repository:
+You can set up goshort either using Docker, or manually building it from source. To install it, firstly `cd` into `$GOPATH/src/github.com/mpinta` and clone the repository:
 ```
 $ git clone https://github.com/mpinta/goshort
 ```
