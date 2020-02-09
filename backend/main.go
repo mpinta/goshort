@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	var err error
 	cfg := config.GetConfig()
 
 	r := gin.Default()
@@ -21,7 +22,7 @@ func main() {
 	r.POST(cfg.Server.RootEndpoint+cfg.Server.LimitEndpoint, handler.Limit)
 	r.GET(cfg.Server.RootEndpoint+cfg.Server.FindEndpoint+"/:url", handler.Find)
 
-	err := data.Recreate()
+	err = data.Create()
 	if err != nil {
 		exception.FatalInternal(err)
 	}

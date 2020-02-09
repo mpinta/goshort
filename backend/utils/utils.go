@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"go/build"
 	"math/rand"
 	"net/url"
-	"os"
 	"path"
 	"time"
 )
@@ -30,5 +30,5 @@ func CheckUrlStructure(u string) error {
 }
 
 func GetApplicationPath() string {
-	return path.Join(os.Getenv("GOPATH"), "src/github.com/mpinta/goshort/backend")
+	return path.Join(build.Default.GOPATH, "/src/github.com/mpinta/goshort/backend")
 }

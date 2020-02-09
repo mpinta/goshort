@@ -16,6 +16,21 @@ func Open() (*gorm.DB, error) {
 	return gorm.Open(cfg.Database.Type, utils.GetApplicationPath()+"/database.db")
 }
 
+func Create() error {
+	db, err := Open()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	if !db.HasTable(&Url{}) {
+		db.CreateTable(&Url{})
+		db.Exec(trigger)
+	}
+
+	return nil
+}
+
 func Recreate() error {
 	db, err := Open()
 	if err != nil {
