@@ -1,6 +1,6 @@
 FROM alpine:edge AS builder
 RUN apk update && apk upgrade
-RUN apk add --update go=1.13.4-r1 gcc=9.2.0-r5 g++=9.2.0-r5
+RUN apk add --update go=1.14.6-r0 gcc=9.3.0-r4 g++=9.3.0-r4
 RUN apk add --no-cache git
 ENV GOPATH /go
 WORKDIR /go/src/github.com/mpinta/goshort/backend

@@ -2,12 +2,13 @@ version: "3"
 services:
   backend:
     build: ./backend
-    image: goshort-backend
+    image: mpinta/goshort-backend
+    container_name: goshort-backend
     ports:
       - 8080:8080
   web:
     build: ./web
-    image: goshort-web
+    image: mpinta/goshort-web
+    container_name: goshort-web
     ports:
-      - 3000:3000
-      
+      - 3000:3000 
